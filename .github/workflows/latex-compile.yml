@@ -12,21 +12,21 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
-    - name: Install LaTeX
+    - name: Install LaTeX and ImageMagick
       run: |
         sudo apt-get update
         sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
-        sudo apt-get install -y texlive-latex-recommended
+        sudo apt-get install -y texlive-latex-recommended imagemagick
     
-    - name: Create dummy assets for testing
+    - name: Create demo assets
       run: |
         mkdir -p assets
-        # Create a dummy image file for testing
-        convert -size 100x100 xc:white assets/profile_photo.jpg || echo "ImageMagick not available, using touch"
-        touch assets/profile_photo.jpg
-        touch assets/university_logo.png
+        # Create a demo profile photo (blue rectangle with "PHOTO" text)
+        convert -size 300x400 xc:"#e8f4f8" -gravity center -pointsize 24 -fill "#0056a0" -annotate +0+0 "DEMO\nPHOTO" assets/profile_photo.jpg
+        # Create a demo university logo (rectangle with "UNIVERSITY" text)
+        convert -size 200x80 xc:"#f0f8ff" -gravity center -pointsize 14 -fill "#003366" -annotate +0+0 "UNIVERSITY\nLOGO" assets/university_logo.png
     
     - name: Create test config file
       run: |
@@ -48,7 +48,7 @@ jobs:
         fi
     
     - name: Upload PDF artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: compiled-cv
@@ -56,7 +56,7 @@ jobs:
         retention-days: 30
     
     - name: Upload logs on failure
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: latex-logs
