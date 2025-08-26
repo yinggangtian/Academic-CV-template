@@ -1,0 +1,66 @@
+name: LaTeX Compilation Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  compile-latex:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Install LaTeX
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+        sudo apt-get install -y texlive-latex-recommended
+    
+    - name: Create dummy assets for testing
+      run: |
+        mkdir -p assets
+        # Create a dummy image file for testing
+        convert -size 100x100 xc:white assets/profile_photo.jpg || echo "ImageMagick not available, using touch"
+        touch assets/profile_photo.jpg
+        touch assets/university_logo.png
+    
+    - name: Create test config file
+      run: |
+        cp examples/config_example.tex config.tex
+    
+    - name: Compile LaTeX document
+      run: |
+        pdflatex -interaction=nonstopmode academic_cv_template.tex
+        pdflatex -interaction=nonstopmode academic_cv_template.tex
+    
+    - name: Check if PDF was created
+      run: |
+        if [ -f academic_cv_template.pdf ]; then
+          echo "✅ PDF compilation successful"
+          ls -la academic_cv_template.pdf
+        else
+          echo "❌ PDF compilation failed"
+          exit 1
+        fi
+    
+    - name: Upload PDF artifact
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: compiled-cv
+        path: academic_cv_template.pdf
+        retention-days: 30
+    
+    - name: Upload logs on failure
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: latex-logs
+        path: |
+          *.log
+          *.aux
+        retention-days: 7
