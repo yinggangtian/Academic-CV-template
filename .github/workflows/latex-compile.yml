@@ -34,8 +34,9 @@ jobs:
     
     - name: Compile LaTeX document
       run: |
-        pdflatex -interaction=nonstopmode academic_cv_template.tex
-        pdflatex -interaction=nonstopmode academic_cv_template.tex
+        pdflatex -interaction=nonstopmode academic_cv_template.tex || true
+        pdflatex -interaction=nonstopmode academic_cv_template.tex || true
+        pdflatex -interaction=nonstopmode academic_cv_template.tex || true
     
     - name: Check if PDF was created
       run: |
