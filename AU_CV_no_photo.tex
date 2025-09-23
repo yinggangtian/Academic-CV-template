@@ -1,0 +1,392 @@
+\documentclass[10pt, a4paper]{article}
+
+% Packages:
+\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2cm,        % separation between body and page edge from the top
+    bottom=2cm,     % separation between body and page edge from the bottom
+    left=2cm,       % separation between body and page edge from the left
+    right=2cm,      % separation between body and page edge from the right
+    footskip=1.0cm  % separation between body and footer
+    % showframe % for debugging
+]{geometry} % for adjusting page geometry
+\usepackage{titlesec} % for customizing section titles
+\usepackage{tabularx} % for making tables with fixed width columns
+\usepackage{array} % tabularx requires this
+\usepackage[dvipsnames]{xcolor} % for coloring text
+\definecolor{primaryColor}{RGB}{0, 0, 0} % define primary color
+\usepackage{enumitem} % for customizing lists
+\usepackage{fontawesome5} % for using icons
+\usepackage{amsmath} % for math
+\usepackage[
+    pdftitle={[YOUR NAME]'s CV},
+    pdfauthor={[YOUR NAME]},
+    pdfcreator={LaTeX Academic CV Template},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref} % for links, metadata and bookmarks
+\usepackage[pscoord]{eso-pic} % for floating text on the page
+\usepackage{calc} % for calculating lengths
+\usepackage{bookmark} % for bookmarks
+\usepackage{lastpage} % for getting the total number of pages
+\usepackage{changepage} % for one column entries (adjustwidth environment)
+\usepackage{paracol} % for two and three column entries
+\usepackage{ifthen} % for conditional statements
+\usepackage{needspace} % for avoiding page brake right after the section title
+\usepackage{iftex} % check if engine is pdflatex, xetex or luatex
+\usepackage{graphicx} % for including images
+\usepackage{wrapfig} % for wrapping text around images
+\usepackage{ragged2e} % for text justification
+
+% Ensure that generate pdf is machine readable/ATS parsable:
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+
+\usepackage{charter}
+
+% Some settings:
+\raggedright
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} % remove space before adjustwidth environment
+\pagestyle{empty} % no header or footer
+\setcounter{secnumdepth}{0} % no section numbering
+\setlength{\parindent}{0pt} % no indentation
+\setlength{\topskip}{0pt} % no top skip
+\setlength{\columnsep}{0.15cm} % set column seperation
+\pagenumbering{gobble} % no page numbering
+
+\titleformat{\section}{\needspace{4\baselineskip}\bfseries\large}{}{0pt}{}[\vspace{1pt}\titlerule]
+
+\titlespacing{\section}{
+    % left space:
+    -1pt
+}{
+    % top space:
+    0.5 cm
+}{
+    % bottom space:
+    0.3 cm
+} % section title spacing
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$} % custom bullet points
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.15 cm,
+        parsep=0.08 cm,
+        partopsep=0pt,
+        itemsep=0.05 cm,
+        leftmargin=0 cm + 10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights
+
+
+\newenvironment{highlightsforbulletentries}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights for bullet entries
+
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{
+        0 cm + 0.00001 cm
+    }{
+        0 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+} % new environment for one column entries
+
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for two column entries
+
+\newenvironment{threecolentry}[3][]{
+    \onecolentry
+    \def\thirdColumn{#3}
+    \setcolumnwidth{, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for three column entries
+
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
+}{
+    \par\kern\topsep
+} % new environment for the header
+
+\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(
+        \LenToUnit{\paperwidth-2 cm-0 cm+0.05cm},
+        \LenToUnit{\paperheight-1.0 cm}
+    ){\vtop{{\null}\makebox[0pt][c]{
+        \small\color{gray}\textit{Last updated in [UPDATE DATE]}\hspace{\widthof{Last updated in [UPDATE DATE]}}
+    }}}%
+  }%
+}%
+
+% save the original href command in a new command:
+\let\hrefWithoutArrow\href
+
+% new command for external links:
+
+
+\begin{document}
+    % Set line spacing and text justification
+    \setlength{\baselineskip}{1.2\baselineskip}
+    \justifying
+    
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{$|$}
+
+    % 在页面左上角绝对定位放置logo
+    \AddToShipoutPicture*{
+        \put(40,800){
+            \includegraphics[width=3cm,keepaspectratio]{/Users/dev/partTime/Academic-CV-template/assets/Monash_University_logo.png}
+        }
+    }
+
+    \begin{header}
+        \vspace{0.5cm}
+        \centering
+        \fontsize{24 pt}{24 pt}\selectfont \textbf{Yinggang Tian}
+        
+        \vspace{0.4cm}
+        
+        \fontsize{10 pt}{12 pt}\selectfont
+        Email: yinggang.tian@outlook.com \textbar{} Address: Melbourne, Australia
+        
+        \vspace{0.1cm}
+        Website: yinggangtian.vercel.app \textbar{} Birthdate: 1997.05
+    \end{header}
+
+    \vspace{5 pt - 0.3 cm}
+
+    \section{Education}
+
+        \begin{twocolentry}{
+            Jul 2025 - Present
+        }
+            \textbf{Monash University}\end{twocolentry}
+
+        \begin{twocolentry}{
+            Melbourne, Australia
+        }
+            Master of Artificial Intelligence Faculty of Information Technology\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item \textbf{Core Courses:} FIT5047 - Fundamentals of Artificial Intelligence, FIT5215 - Deep Learning
+                \item \textbf{Research Interest:} Medical AI, Computer Vision, Edge Computing Optimization
+            \end{highlights}
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Sep 2016 - Jul 2020
+        }
+            \textbf{Northwestern Polytechnical University Mingde College}\end{twocolentry}
+
+        \begin{twocolentry}{
+            Xi'an, China
+        }
+            Bachelor of Communication Engineering\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item \textbf{Relevant Coursework:} Numerical Analysis, Signal Processing \& Systems, Software Engineering, C Programming
+                \item \textbf{Academic Achievements:} First Prize in Mathematical Modeling Competition, Multiple Provincial Math Competition Awards
+            \end{highlights}
+        \end{onecolentry}
+
+
+
+    
+    \section{Professional Experience}
+
+        \begin{twocolentry}{
+            Jun 2023 - Jun 2025
+        }
+            \textbf{HL Mando, China Software R\&D Center}\end{twocolentry}
+
+        \begin{twocolentry}{
+            Suzhou
+        }
+            Senior Research Engineer Braking ADAS\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Led algorithm design and prototype development for braking-related Advanced Driver Assistance Systems (ADAS)
+                \item Developed perception and decision logic modules that integrate sensor inputs and produce braking decisions under real-time constraints; implemented core modules in C++/Python and collaborated with embedded teams for vehicle integration
+                \item Worked on dataset curation and annotation pipelines for scenario-driven testing; designed offline training/validation workflows and online evaluation metrics for braking scenarios
+                \item Performed runtime profiling and optimization to meet hard latency deadlines: identified CPU/GPU and I/O bottlenecks, applied algorithmic simplifications and pipeline optimizations to reduce inference latency; prepared artifacts for OTA/prototype deployment
+                \item Coordinated with system engineers on ECU interfacing, diagnostic logs, and safety checks; contributed design documents and verification reports
+            \end{highlights}
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Nov 2022 - Jun 2023
+        }
+            \textbf{iFLYTEK}\end{twocolentry}
+
+        \begin{twocolentry}{
+            
+        }
+            Software Engineer Intelligent Audio Effects Division\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Led R\&D for Ethernet-based audio transmission proof-of-concept; selected IEEE 1722 for audio transport and 802.1AS for time sync after standards research and comparative analysis
+                \item Implemented diagnostic and network management modules for in-vehicle audio platform using AUTOSAR-style state machine; responsible for DID-based info retrieval and control routines
+                \item Developed embedded debugging workflows with J-Link and IAR; participated in system-level integration and test
+            \end{highlights}
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Jul 2020 - Nov 2022
+        }
+            \textbf{Huawei Suzhou Research Institute}\end{twocolentry}
+
+        \begin{twocolentry}{
+            Suzhou, China
+        }
+            C/C++ Software Engineer In-vehicle Networks\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Contributed to development of vehicle gateway platform: diagnostics, network management, software upgrade and routing modules
+                \item Independently developed a vehicle gateway product for Jiangling project — end-to-end development including detailed design, testing and documentation
+                \item Hands-on experience with CAN, Ethernet, TBOX comms, UDS diagnostics; familiar with Vector CANoe, Lauterbach, ZCANPro workflows
+            \end{highlights}
+        \end{onecolentry}
+
+
+
+    
+    \section{Research Projects}
+
+        \begin{twocolentry}{
+            Oct 2018 - Jul 2020
+        }
+            \textbf{AI-Powered Interactive System Design and Implementation}\end{twocolentry}
+
+        \begin{twocolentry}{
+            
+        }
+            Framework Designer \& Algorithm Developer\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item \textbf{Cloud-Deployed AI System:} Designed scalable architecture for AI voice recognition API optimization using machine learning
+                \item \textbf{Hardware Integration:} Developed custom hardware circuits for AI voice recognition interaction systems
+                \item \textbf{Advanced Neural Networks:} Implemented and compared CNN vs RNN architectures for speaker recognition, establishing Bidirectional RNN (BRNN) as optimal network structure
+                \item \textbf{Loss Function Optimization:} Comprehensive analysis of 8 loss functions (Sigmoid Cross-Entropy, Softmax Loss, Triplet Loss, Center Loss, etc.) for speaker recognition performance
+                \item \textbf{Framework Proficiency:} Gained expertise in PyTorch and TensorFlow for deep learning implementation
+                \item \textbf{Industry Practices:} Applied DevOps and Agile development methodologies in research environment
+            \end{highlights}
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Jan 2020 - Apr 2020
+        }
+            \textbf{Microsoft Xiaoyuan COVID-19 Q\&A Chatbot}\end{twocolentry}
+
+        \begin{twocolentry}{
+            
+        }
+            Development Engineer\end{twocolentry}
+
+        \vspace{0.10 cm}
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Built comprehensive knowledge base for COVID-19 related inquiries during Wuhan outbreak
+                \item Deployed chatbot across WeChat and open-source communities
+                \item \textbf{Core Technology:} Microsoft Dialog Engine for intelligent pandemic response system
+            \end{highlights}
+        \end{onecolentry}
+
+
+
+    
+    \section{Skills \& Technologies}
+
+        \begin{onecolentry}
+            \textbf{Languages:} Python, C/C++, MATLAB
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Deep Learning:} TensorFlow, PyTorch, Computer Vision
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Automotive:} AUTOSAR, CAN/Ethernet protocols, Embedded Systems
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Tools:} Vector CANoe, Lauterbach, J-Link, IAR, WordPress, XMind
+        \end{onecolentry}
+
+    \section{Research Recognition \& Awards}
+
+        \begin{onecolentry}
+            \begin{highlights}
+                \item Chinese Academy of Sciences Summer Program Graduate Certificate
+                \item Shanghai Institute of Advanced Studies Winter Camp Excellence Award
+                \item First Prize - National Mathematical Modeling Competition (University Level)
+                \item Third Prize - Blue Bridge Cup Programming Competition (Provincial Level)
+                \item Second Prize - National Mathematics Competition (Provincial Level) $\times$ 2
+                \item Second Prize - Shaanxi Mathematics Competition $\times$ 2
+                \item Outstanding Student Award $\times$ 2
+            \end{highlights}
+        \end{onecolentry}
+
+
+    
+
+\end{document}
